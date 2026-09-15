@@ -31,6 +31,8 @@ A large share of production inference workloads are not "ask a frontier model to
 
 The tradeoff is real: on-device models are smaller, so they're categorically worse at open-ended reasoning, long-context tasks, and anything that benefits from a frontier model's scale. This list exists to help you tell those two situations apart, not to argue edge always wins.
 
+**Licensing note:** every resource below is tagged with its license — `(MIT)`, `(Apache-2.0)`, `(BSD-3-Clause)`, `(open format)`, `(open standard)`, or `(proprietary)`. Where a category has both open-source and proprietary/vendor-locked options, the FOSS, cross-platform option is the default recommendation; the proprietary one is included because it's sometimes still the right call once you're already committed to that vendor's platform.
+
 ## Decision Heuristics
 
 Lean **edge-first** when:
@@ -48,33 +50,38 @@ Lean **cloud/frontier model** when:
 
 ## On-Device Inference SDKs
 
-- [Core ML](https://developer.apple.com/documentation/coreml) — Apple's on-device inference framework across iOS/macOS, with the Neural Engine as a first-class target.
-- [TensorFlow Lite / LiteRT](https://ai.google.dev/edge/litert) — Google's edge runtime for mobile, embedded, and IoT, the successor branding of TFLite.
-- [ONNX Runtime Mobile](https://onnxruntime.ai/docs/tutorials/mobile/) — ONNX Runtime's mobile-optimized build for iOS/Android with reduced binary size.
-- [MediaPipe](https://github.com/google-ai-edge/mediapipe) — Google's cross-platform pipeline framework for on-device vision, audio, and text tasks (face/hand landmarking, segmentation, LLM inference).
-- [PyTorch ExecuTorch](https://github.com/pytorch/executorch) — PyTorch's edge/mobile inference runtime, designed to run models exported from PyTorch with minimal overhead on-device.
-- [Qualcomm AI Engine Direct SDK (QNN)](https://www.qualcomm.com/developer/software/qualcomm-ai-engine-direct-sdk) — vendor SDK for Snapdragon NPUs.
+FOSS, cross-platform first — reach for these before a single-vendor lock-in SDK:
+
+- [TensorFlow Lite / LiteRT](https://ai.google.dev/edge/litert) (Apache-2.0) — Google's edge runtime for mobile, embedded, and IoT, the successor branding of TFLite.
+- [ONNX Runtime Mobile](https://onnxruntime.ai/docs/tutorials/mobile/) (MIT) — ONNX Runtime's mobile-optimized build for iOS/Android with reduced binary size.
+- [MediaPipe](https://github.com/google-ai-edge/mediapipe) (Apache-2.0) — Google's cross-platform pipeline framework for on-device vision, audio, and text tasks (face/hand landmarking, segmentation, LLM inference).
+- [PyTorch ExecuTorch](https://github.com/pytorch/executorch) (BSD-3-Clause) — PyTorch's edge/mobile inference runtime, designed to run models exported from PyTorch with minimal overhead on-device.
+
+Vendor-locked, proprietary — legitimate once you're already all-in on that platform, but not the FOSS default:
+
+- [Core ML](https://developer.apple.com/documentation/coreml) (proprietary, Apple platforms only) — Apple's on-device inference framework across iOS/macOS, with the Neural Engine as a first-class target. Free to use as an Apple developer, but closed-source and locked to Apple hardware — reach for the FOSS options above unless you're already iOS/macOS-only.
+- [Qualcomm AI Engine Direct SDK (QNN)](https://www.qualcomm.com/developer/software/qualcomm-ai-engine-direct-sdk) (proprietary) — vendor SDK for Snapdragon NPUs.
 
 ## Browser / Edge Inference
 
-- [transformers.js](https://github.com/huggingface/transformers.js) — run Hugging Face Transformers models directly in the browser via ONNX Runtime Web / WebGPU.
-- [ONNX Runtime Web](https://onnxruntime.ai/docs/tutorials/web/) — ONNX Runtime compiled to WebAssembly/WebGPU for in-browser inference.
-- [WebNN](https://www.w3.org/TR/webnn/) — the emerging W3C Web Neural Network API for native-speed inference in the browser via the OS's ML stack.
-- [ml5.js](https://ml5js.org/) — friendly, beginner-oriented wrapper for in-browser ML, built on TensorFlow.js.
+- [transformers.js](https://github.com/huggingface/transformers.js) (Apache-2.0) — run Hugging Face Transformers models directly in the browser via ONNX Runtime Web / WebGPU.
+- [ONNX Runtime Web](https://onnxruntime.ai/docs/tutorials/web/) (MIT) — ONNX Runtime compiled to WebAssembly/WebGPU for in-browser inference.
+- [WebNN](https://www.w3.org/TR/webnn/) (open standard, not software) — the emerging W3C Web Neural Network API for native-speed inference in the browser via the OS's ML stack. A spec, not a licensed codebase — implementations ship inside browsers.
+- [ml5.js](https://ml5js.org/) (MIT) — friendly, beginner-oriented wrapper for in-browser ML, built on TensorFlow.js.
 
 ## Edge Inference Serving
 
-- [NVIDIA Triton Inference Server](https://github.com/triton-inference-server/server) — supports edge/Jetson deployment targets alongside datacenter GPUs.
-- [KServe](https://github.com/kserve/kserve) — Kubernetes-native model serving that can be deployed at edge clusters, not just central cloud.
-- [llama.cpp server](https://github.com/ggml-org/llama.cpp) — lightweight local inference server, commonly used to stand up an edge/on-prem LLM endpoint.
-- [LocalAI](https://github.com/mudler/LocalAI) — OpenAI-API-compatible local inference server for running models on your own edge/on-prem hardware.
+- [NVIDIA Triton Inference Server](https://github.com/triton-inference-server/server) (BSD-3-Clause) — genuinely open source despite the NVIDIA name; supports edge/Jetson deployment targets alongside datacenter GPUs.
+- [KServe](https://github.com/kserve/kserve) (Apache-2.0) — Kubernetes-native model serving that can be deployed at edge clusters, not just central cloud.
+- [llama.cpp server](https://github.com/ggml-org/llama.cpp) (MIT) — lightweight local inference server, commonly used to stand up an edge/on-prem LLM endpoint.
+- [LocalAI](https://github.com/mudler/LocalAI) (MIT) — OpenAI-API-compatible local inference server for running models on your own edge/on-prem hardware.
 
 ## Model Compression for Edge Deployment
 
-- [llama.cpp / GGUF ecosystem](https://github.com/ggml-org/llama.cpp) — the quantization format and runtime that made running LLMs on consumer/edge hardware practical.
-- [Hugging Face Optimum](https://github.com/huggingface/optimum) — export and optimize (quantize, prune, graph-optimize) models for specific edge/accelerator targets.
-- [Neural Network Distiller / general distillation techniques](https://github.com/IntelLabs/distiller) — reference implementations for compressing models via distillation and pruning.
-- [AIMET (AI Model Efficiency Toolkit)](https://github.com/quic/aimet) — Qualcomm's open-source toolkit for quantization and compression targeting edge deployment.
+- [llama.cpp / GGUF ecosystem](https://github.com/ggml-org/llama.cpp) (MIT; GGUF itself is an open format, not licensed software) — the quantization format and runtime that made running LLMs on consumer/edge hardware practical.
+- [Hugging Face Optimum](https://github.com/huggingface/optimum) (Apache-2.0) — export and optimize (quantize, prune, graph-optimize) models for specific edge/accelerator targets.
+- [Neural Network Distiller / general distillation techniques](https://github.com/IntelLabs/distiller) (Apache-2.0) — reference implementations for compressing models via distillation and pruning.
+- [AIMET (AI Model Efficiency Toolkit)](https://github.com/quic/aimet) (BSD-3-Clause) — Qualcomm's open-source toolkit for quantization and compression targeting edge deployment.
 
 ## Edge-First Product Patterns
 
