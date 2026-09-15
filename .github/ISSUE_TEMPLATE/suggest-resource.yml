@@ -1,0 +1,36 @@
+name: Suggest a resource
+description: Propose a tool, SDK, or resource to add to the list
+labels: ["suggestion"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Resource name
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: URL (prefer the official repo/docs)
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - On-Device Inference SDKs
+        - Browser / Edge Inference
+        - Edge Inference Serving
+        - Model Compression for Edge Deployment
+        - Edge-First Product Patterns
+        - Further Reading
+        - New category (explain below)
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why does this belong on an edge-first inference decision guide?
+    validations:
+      required: true
